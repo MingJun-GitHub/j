@@ -1,5 +1,6 @@
-import React, {memo} from 'react'
-import {SearchBox, Icon} from './style'
+import React, {memo} from 'react';
+import {SearchBox, Icon} from './style';
+import {withRouter} from 'react-router-dom';
 const  SearchBar = (props) => {
     const goSearch = () => {
         props.history.push('/search')
@@ -14,4 +15,4 @@ const  SearchBar = (props) => {
 SearchBar.defaultProps = {
     keywords: '搜索'
 }
-export default memo(SearchBar)
+export default withRouter(memo(SearchBar));

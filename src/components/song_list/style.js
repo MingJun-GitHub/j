@@ -34,6 +34,8 @@ export const Item = styled.div`
         width: 3.2rem;
         height: 3.2rem;
         position: relative;
+        border-radius: .05rem;
+        overflow: hidden;
         img{
             width: 100%;
             height: auto;

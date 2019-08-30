@@ -12,13 +12,23 @@
  } 
 
 
- export default [{
-     path: '/',
-     component: Index
-     /*
-     routes: [{
+
+ const SearchComponent = lazy(() => import('@/pages/search'))
+ const Search = (props) => {
+     return <Suspense fallback={null}>
+     <SearchComponent {...props} />
+ </Suspense>
+ } 
+ 
+/**routes: [{
          path: '/',
          exact: true
-     }]
-     */
+     }] */
+ export default [{
+     path: '/',
+     component: Index,
+     exact: true  
+ }, {
+     path: '/search', 
+     component: Search
  }]

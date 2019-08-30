@@ -2,8 +2,8 @@ import React, { memo } from 'react';
 import {withRouter} from 'react-router-dom';
 import LazyLoad from 'react-lazyload';
 import IndexTitle from '@/components/index_title';
-import {ListWrap, List, Item} from './style'
-import LoadingImg from '@/components/loading_img'
+import {ListWrap, List, Item} from './style';
+import LoadingImg from '@/components/loading_img';
 const SongList = (props) => {
         const { newSongList, title }  = props
         const filterCount = (item) => {

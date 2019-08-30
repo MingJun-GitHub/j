@@ -4,7 +4,6 @@ import './App.scss';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import fastclick from 'fastclick';
-
 fastclick.attach(document.body);
 ReactDOM.render( < App / > , document.getElementById('root'));
 
