@@ -18,12 +18,12 @@ function Index(props){
       }
       
       const getSongList = async ()=> {
-        const res = await axios.get('http://10.66.51.134:4000/personalized?limit=8')
+        const res = await axios.get('/personalized?limit=8')
         setNewSongList(res.result)
       }
 
       const getTopSongList = async ()=> {
-        const res = await axios.get('http://10.66.51.134:4000/top/song?type=0')
+        const res = await axios.get('/top/song?type=0')
         setTopSongList(res.data.splice(0, 4))
       }
 

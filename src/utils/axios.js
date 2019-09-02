@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 axios.defaults.timeout = 20000;
-axios.defaults.baseURL = 'http://10.66.51.134:4000';
+axios.defaults.baseURL = 'http://10.66.51.134:3000';
 
 axios.interceptors.request.use(
     config => {
