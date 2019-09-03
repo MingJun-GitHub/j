@@ -203,7 +203,7 @@ const Search = (props) => {
                     <div className="title"><i className="iconfont icon-icon-185"></i>匹配结果</div>
                     {
                         searchResult.artist && searchResult.artist.length > 0  &&  searchResult.artist.map((item, index)=> {
-                            return <div className="artist" key={index}>
+                            return <div className="artist" key={index} onClick={ () => props.history.push(`/artist/${item.id}`)}>
                                     <div className="artist_pic">
                                         <img src={item.img1v1Url || item.picUrl} alt={item.name} />
                                     </div>
