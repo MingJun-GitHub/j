@@ -13,7 +13,7 @@ export const SongPage = styled.div`
         background-image: url(${props=> props.bgurl});
         display: block;
         height: 100%;
-        width: 10.24rem;
+        width: 10rem;
         top: 0;
         right: 0;
         left: 0;
@@ -27,7 +27,7 @@ export const SongPage = styled.div`
         z-index: 2;
         background-color: rgba(0,0,0,.5);
         height: 100%;
-        width: 10.24rem;
+        width: 10rem;
         top: 0;
         right: 0;
         left: 0;
@@ -38,7 +38,7 @@ export const SongPage = styled.div`
         &_topbox{
             width: 100%;
             height: auto;
-            width: 10.24rem;
+            width: 10rem;
             z-index: 100;
             position: relative;
             display: flex;
@@ -50,20 +50,16 @@ export const SongPage = styled.div`
         }
         &_name{
             font-size: .42rem;
-            padding-top: .5rem;
+            padding-top: .8rem;
         }
         &_singer{
             color: #cfcfcf;
             font-size: .36rem;
-            padding:.2rem;
-        }
-        &_ablumbox {
-            position: relative;
-            height: 6.2rem;
+            padding:.4rem;
         }
         &_ablum {
-            width: 6.2rem;
-            height: 6.2rem;
+            width: 5.8rem;
+            height: 5.8rem;
             background-color: rgba(255,255,255, .1);
             box-shadow: 0 0.05rem 0.2rem rgba(0,0,0,.2);
             display: flex;
@@ -78,11 +74,34 @@ export const SongPage = styled.div`
                 display: block;
             }
         }
-        /* &_lyric{
+        &_lyric{
             font-size: .36rem;
             color: #cfcfcf;
-            padding:.3rem;
-        } */
+            height: 1.82rem;
+            overflow-x: hidden;
+            overflow-y: auto;
+            margin: .6rem 0;
+            transition: all .3s ease;
+            ul {
+                transition: all .3s ease-in-out;
+                transform: translateY(0px);
+                -webkit-overflow-scrolling : touch;
+            }
+            li{
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                flex-wrap: wrap;
+                text-align: center;
+                line-height: .6rem;
+                padding: 0 .7rem;
+                transition: all .3s ease;
+                &.active{
+                    color: #fff;
+                    font-size: .42rem;
+                }
+            }
+        }
         &_playtools{
             i {
                 padding: .2rem;
@@ -97,10 +116,26 @@ export const SongPage = styled.div`
             display: flex;
             justify-content: center;
             align-items: center;
-            margin: .3rem auto 0rem;
+            margin: .5rem auto 0rem;
             border-radius: .5rem;
             box-shadow: 0 6px 32px rgba(250, 95, 47,.5);
             font-size: .42rem;
         }
     }
+    .song_main{
+        position: relative;
+        z-index: 100;
+    }
+`
+
+export const SongTitle = styled.div`
+    font-size: .36rem;
+    color: #cfcfcf;
+    text-align: left;
+    padding: 0 .2rem;
+    margin: .6rem auto;
+`
+
+export const LikeSongList = styled.div`
+    /* font-size:  */
 `

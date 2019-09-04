@@ -235,7 +235,7 @@ const Search = (props) => {
                             <ul>
                                 {
                                    songList.map((item,index) => {
-                                       return  <li key={index}>
+                                       return  <li key={index} onClick={() => props.history.push(`/song/${item.id}`)}>
                                                 <div className="song_name">{item.name}</div>
                                                 <div className="song_info">{item.album.name}-{item.artists[0].name}</div>
                                             </li>
