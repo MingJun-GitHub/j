@@ -142,6 +142,7 @@
     "react-router-config": "^5.0.1",
     "react-router-dom": "^5.0.1",
     "react-thunk": "^1.0.0",
+    "react-transition-group": "^4.2.2",
     "styled-components": "^4.3.2",
     "swiper": "^4.5.0"
   }

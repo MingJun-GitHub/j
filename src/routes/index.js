@@ -42,6 +42,13 @@
  </Suspense>
  } 
 
+ const MvComponent = lazy(() => import('@/pages/mv'))
+ const Mv = (props) => {
+     return <Suspense fallback={null}>
+     <MvComponent {...props} />
+ </Suspense>
+ } 
+
 /**routes: [{
          path: '/',
          exact: true
@@ -59,4 +66,7 @@
  }, {
     path: '/song/:id',
     component: Song
+},{
+    path: '/mv',
+    component: Mv
 }]

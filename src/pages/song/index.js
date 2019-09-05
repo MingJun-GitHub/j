@@ -99,7 +99,6 @@ const Song = (props) => {
             for (let i = 0; i < lyric.length; i++) {
                 if ((curTime > lyric[i].time) && (curTime < lyric[i+1].time)) { 
                     if (curIndex!==i) {
-
                         topHeight += lyricBox.current.children[0].children[i].offsetHeight;
                         lyricBox.current.scrollTop = 0;
                         curIndex++;
