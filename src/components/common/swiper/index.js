@@ -2,23 +2,39 @@ import React, {useState, useEffect, useRef, memo} from 'react';
 import {withRouter} from 'react-router-dom';
 import 'swiper/dist/css/swiper.min.css';
 import Swiper from 'swiper';
-import { SwiperPagination } from './style';
+import styled from 'styled-components'; 
+
+export const SwiperPagination = styled.div`
+   bottom: .18rem !important;
+   .swiper-pagination-bullet{
+       width: .4rem;
+       height:.1rem;
+       border-radius: 0;
+       line-height: normal;
+       &-active {
+           background: #000;
+       }
+   }
+`
+
 const Slider = (props) => {
     const [sliderSwiper, setSliderSwiper] = useState(null);
     const swiperRef = useRef();
-    const { children, paginaTion, bannerList} = props;
+    const { children, paginaTion, data} = props;
+    
     //  buttonPrev, buttonNext, scrollBar,
     useEffect(() => { 
-        if(bannerList.length && !sliderSwiper){ 
+        if(data.length && !sliderSwiper){ 
            let sliderSwiper = new Swiper(swiperRef.current, props);
            setSliderSwiper(sliderSwiper);
         }
-    }, [bannerList.length, sliderSwiper, props]);
+    }, [data.length, sliderSwiper]);
+
     return (
         <div className='swiper-container' ref={swiperRef}>
-                {bannerList.length > 0 && <div className='swiper-wrapper'>
+                {data.length > 0 && <div className='swiper-wrapper'>
                     {
-                        bannerList.map(item => {
+                        data.map(item => {
                           return <div className='swiper-slide' style={{lineHeight: '0'}} key={item.bannerId}>
                               <img src={item.pic} alt='图片加载中...' style={{width: '100%', height: 'auto' }} />
                             </div>
@@ -47,8 +63,7 @@ Slider.defaultProps = {
     // buttonPrev: false,
     // buttonNext: false,
     // scrollBar: false,
-    bannerList: []
+    data: []
 }
-
 
 export default withRouter(memo(Slider))

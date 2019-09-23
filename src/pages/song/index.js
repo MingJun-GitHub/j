@@ -3,7 +3,6 @@ import axios from '@/utils/axios';
 import {SongPage, SongTitle, LikeSongList} from './sytle';
 const Song = (props) => {
     const id = props.match.params.id;
-
     const [songDetail, setSongDetail] = useState(null);
     const [lyric, setLyric] = useState([]);
     const [songUrl, setSongUrl] = useState(null);

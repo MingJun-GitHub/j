@@ -49,7 +49,7 @@ const Toast = forwardRef((props, ref) => {
 
     const [show, setShow] = useState(false);
     const [timer, setTimer] = useState('');
-    const {text, timeout, closeCallBack} = props;
+    const {text, timeout, handleClose} = props;
 
     useImperativeHandle(ref, () => ({
         show() {
@@ -57,7 +57,7 @@ const Toast = forwardRef((props, ref) => {
             setShow(true);
             setTimer(setTimeout(() => {
                 setShow(false)
-                closeCallBack();
+                handleClose();
             }, timeout));
         },
         hide() {
@@ -75,7 +75,8 @@ const Toast = forwardRef((props, ref) => {
 
 Toast.defaultProps = {
     text: '',
-    timeout: 3000
+    timeout: 3000,
+    handleClose: () => {}
 }
 
 export default React.memo(Toast);

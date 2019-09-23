@@ -47,7 +47,14 @@
      return <Suspense fallback={null}>
      <MvComponent {...props} />
  </Suspense>
- } 
+ }
+ 
+ const TestComponent = lazy(() => import('@/pages/test'))
+ const Test = (props) => {
+     return <Suspense fallback={null}>
+     <TestComponent {...props} />
+ </Suspense>
+ }
 
 /**routes: [{
          path: '/',
@@ -69,4 +76,7 @@
 },{
     path: '/mv',
     component: Mv
+}, {
+    path: '/test',
+    component: Test
 }]

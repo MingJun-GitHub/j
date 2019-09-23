@@ -18,6 +18,7 @@ const Artist = (props) => {
         if (hotSongs.length) {
             setHotSongs(lookMore?artistData.hotSongs.slice(0, 5):artistData.hotSongs);
         }
+        // eslint-disable-next-line
     }, [lookMore]);
 
     const getArtistDetails = async () => {
