@@ -29,7 +29,7 @@ const Test = (props) => {
         console.log('post==>', pos)
     }
     return(
-        <Scroll onScroll={(pos) => handleScroll(pos)} pullUp={() => handlePullUp()} pullUpLoading={false} bounceTop={false}>
+        <Scroll doScroll={(pos) => {}} doPullDownFresh={() => {}} doPullDownFresh={()=> {return Promise.resolve('dd')}}>
             <div>
                 <h1>Icon and IconTitle<Icon color="#fff"></Icon></h1>
                 <Swiper data={bannerList}></Swiper>

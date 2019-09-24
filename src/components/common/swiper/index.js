@@ -20,12 +20,12 @@ export const SwiperPagination = styled.div`
 const Slider = (props) => {
     const [sliderSwiper, setSliderSwiper] = useState(null);
     const swiperRef = useRef();
-    const { children, paginaTion, data} = props;
+    const { children, paginaTion, data, options} = props;
     
     //  buttonPrev, buttonNext, scrollBar,
     useEffect(() => { 
         if(data.length && !sliderSwiper){ 
-           let sliderSwiper = new Swiper(swiperRef.current, props);
+           let sliderSwiper = new Swiper(swiperRef.current, options);
            setSliderSwiper(sliderSwiper);
         }
     }, [data.length, sliderSwiper]);
@@ -52,12 +52,14 @@ const Slider = (props) => {
 }
 
 Slider.defaultProps = {
-    loop: true,
-    autoplay: { 
-        disableOnInteraction: false,
-    },
-    pagination: {
-        el: '.swiper-pagination'
+    options: {
+        loop: true,
+        autoplay: { 
+            disableOnInteraction: false,
+        },
+        pagination: {
+            el: '.swiper-pagination'
+        }
     },
     paginaTion: true,
     // buttonPrev: false,
