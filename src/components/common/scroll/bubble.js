@@ -4,7 +4,6 @@ import styled from 'styled-components'
 
 const BubbleBox = styled.div`
    position: absolute;
-   top: -50px;
    left: 50%;
    transform: translateX(-50%);
 `

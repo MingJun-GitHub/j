@@ -25,8 +25,8 @@ const T = styled.div`
 
 const Icon = (props) => {
     return (
-        props.title ? <T {...props}>
-            <I className={"iconfont icon-icon-"+props.index} {...props}></I><span>{props.title}</span>
+        props.children ? <T>
+            <I className={"iconfont icon-icon-"+props.index} {...props}></I><span>{props.children}</span>
         </T> : <I className={"iconfont icon-icon-"+props.index} {...props}></I>
     )
 }
@@ -35,7 +35,7 @@ Icon.defaultProps = {
     index: 3,          // 序列号
     color: '#ffffff',
     fontSize: 36,
-    title: ''
+    // title: ''
 }
 
 export default withRouter(memo(Icon))

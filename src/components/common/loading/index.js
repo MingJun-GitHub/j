@@ -8,11 +8,12 @@ const LoadingBox = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #2a2a2a;
+    background-color: transparent;
     color: #fff;
-    font-size: .42rem;
+    font-size: .36rem;
     padding: .3rem;
     line-height: normal;
+    color: #999;
     img{
         height: .5rem;
         margin-right: .2rem;
@@ -22,18 +23,16 @@ const LoadingBox = styled.div`
 const Loading = (props) => {
     const loadingArr = [loadingImg, loadingImg2, loadingImg3]
     const {
-        title,
         style
     } = props
     return (
         <LoadingBox>
-            <img src={loadingArr[style]} alt="loading" />{title}
+            <img src={loadingArr[style]} alt="loading" />{props.children}
         </LoadingBox>
     )
 }
 
 Loading.defaultProps = {
-    title: '加载中...',
     style: 0 // 风格1， 2
 }
 

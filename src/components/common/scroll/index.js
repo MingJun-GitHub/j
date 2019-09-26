@@ -1,16 +1,52 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react'
 import PropTypes from 'prop-types'
 import BScroll from 'better-scroll'
 import styled from 'styled-components'
-// import Loading from '../loading/loading'
 import Bubble from './bubble'
+import Loading from '@/components/common/loading'
 
 const ScrollContainer = styled.div`
-   width:100vw;
-   height: 100vh;
-   overflow: hidden;
-` 
-// import './betterScroll.css'
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+  background: transparent;
+  .pullup_wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 1rem;
+    line-height: normal;
+  }
+  .pulldown_wrapper {
+    position: absolute;
+    width: 100%;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all;
+    pointer-events: none;
+  }
+  .pulldown_status, .pullup_status {
+    font-size: .36rem;
+    color: #999;
+  }
+`
+
+const PullDowned = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #999;
+  font-size: .36rem;
+  line-height: normal;
+  height: 50px;
+`
 
 let defaultPullDownRefresh = {
   threshold: 100,
@@ -18,7 +54,7 @@ let defaultPullDownRefresh = {
   stopTime: 600,
   txt: {
     success: '刷新成功',
-  },
+  }
 }
 
 let defaultPullUpLoad = {
@@ -26,21 +62,22 @@ let defaultPullUpLoad = {
   txt: {
     more: '加载更多',
     nomore: '我是有底线的',
-  },
+  }
 }
 
-const Scroll = (props) => {
+const Scroll = forwardRef((props, ref) => {
 
   const [scroll, setScroll] = useState(null)
   
   const scrollRef = useRef(null)
   
-
   let isRebounding = false
-  // let pulling = false
 
   let pullDownInitTop = -50
   
+  let TimerA = null
+  let TimerB = null
+
   let state = {
     isPullUpLoad: false,
     beforePullDown: true,
@@ -53,10 +90,6 @@ const Scroll = (props) => {
 
   const [scrollState, setScrollState] = useState(state)
 
-  let TimerA = null
-  let TimerB = null
-
-
   const [options, setOptions] = useState(null)
 
   useEffect(() => {
@@ -64,16 +97,14 @@ const Scroll = (props) => {
   }, [])
 
   useEffect(() => {
-    scroll && options && initEvents()
-  }, [scroll, options])
-
-  useEffect(() => {
-    console.log('scrollState', scrollState)
-  }, [scrollState])
-
+    scroll && initEvents()
+  }, [scroll])
+  
+  /*
   function createScrollId() {
     return Math.random().toString(36).substr(3, 10);
   }
+  */
 
   function initScroll() {
     let { probeType, click, startY, scrollY, scrollX, freeScroll, scrollbar, pullDownRefresh, pullUpLoad, preventDefaultException, eventPassthrough, bounce,stopPropagation } = props
@@ -87,7 +118,7 @@ const Scroll = (props) => {
       ...pullUpLoad
     } : (pullUpLoad ? defaultPullUpLoad : false)
 
-    var params = {
+    const params = {
       probeType,
       click,
       startY,
@@ -106,12 +137,10 @@ const Scroll = (props) => {
     let wrapper = scrollRef.current
     const scrollBox = new BScroll(wrapper, params)
     setScroll(scrollBox)
-    setOptions(params)
-    // options && initEvents()
+    setOptions({...params})
   }
 
   function initEvents() {
-    console.log('options', options)
     if (options.pullUpLoad) {
       _initPullUpLoad()
     }
@@ -123,38 +152,39 @@ const Scroll = (props) => {
         props.doScrollStart(pos)
       })
     }
-    if (props.doScroll) {
-      scroll.on('scroll', (pos) => {
-        //console.log('sss')
-        props.doScroll(pos)
-      })
-    }
     if (props.doScrollEnd) {
       scroll.on('scrollEnd', (pos) => {
         props.doScrollEnd(pos)
       })
     }
-    if (props.disabled) {
-      scroll.disable()
-    }
+    scroll && scroll.on('scroll', (pos) => {
+      // console.log('pos-y==>', pos.y, scroll.maxScrollY)
+      props.doScroll && props.doScroll(pos)
+      if (props.doScrollTop) {
+        console.log('到顶')
+        pos.y >= 0 && props.doScrollTop(pos) // 到顶
+      }
+      if (props.doScrollBottom) {
+        console.log('到底')
+        pos.y <= scroll.maxScrollY && props.doScrollBottom(pos) // 到底
+      }
+    })
   }
 
 
-  // function getScrollObj () {
-  //   return scroll
-  // }
-
+  // 下拉刷新 先打开 pullDownRefresh true
   function _initPullDownRefresh() {
-    console.log('start==>')
     scroll.on('pullingDown', () => {
       state.beforePullDown = false
       state.pulling = true
-      setScrollState(state)
+      setScrollState({...state})
+      scroll.disable()
       props.doPullDownFresh()
         .then(() => {
           if (!scroll) { return }
+          scroll.enable()
           state.pulling = false
-          setScrollState(state)
+          setScrollState({...state})
           _reboundPullDown()
             .then(() => {
               _afterPullDown()
@@ -167,27 +197,29 @@ const Scroll = (props) => {
       if (pos.y < 0) {
         return
       }
-
       if (beforePullDown) {
         state.bubbleY = Math.max(0, pos.y + pullDownInitTop)
         state.pullDownStyle = {
-          top: `${Math.min(pos.y + pullDownInitTop, 10)}px`,
+          top: `${Math.min(pos.y + pullDownInitTop, 0)}px`,
         }
       } else {
         state.bubbleY = 0
+        state.pullDownStyle = {
+          top: `${0 - (defaultPullDownRefresh.stop - pos.y)}px`,
+        }
       }
       if (isRebounding) {
         state.pullDownStyle = {
-          top: `${10 - (defaultPullDownRefresh.stop - pos.y)}px`,
+          top: `${0 - (defaultPullDownRefresh.stop - pos.y)}px`,
         }
-      }
-      setScrollState(state)
+      } 
+      setScrollState({...state})
     })
   }
 
   function _reboundPullDown() {
     let { stopTime = 600 } = options.pullDownRefresh
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       TimerA = setTimeout(() => {
         isRebounding = true
         scroll.finishPullDown()
@@ -204,108 +236,101 @@ const Scroll = (props) => {
       }
       isRebounding = false
       scroll.refresh()
+      setScrollState({...state})
     }, scroll.options.bounceTime)
   }
 
+  // 上拉加载更多
   function _initPullUpLoad() {
     scroll.on('pullingUp', () => {
+      if (props.pullUploadEnd) {
+        return
+      }
       state.isPullUpLoad = true
-      setScrollState(state)
+      setScrollState({...state})
       props.pullUpLoadMoreData().then(() => {
         if (!scroll) { return }
         state.isPullUpLoad = false
-        setScrollState(state)
         scroll.finishPullUp()
         scroll.refresh()
+        setScrollState({...state})
       })
     })
   }
 
   function renderPullUpLoad() {
-    let { pullUpLoad, isPullUpTipHide } = props
-
-    if (pullUpLoad && isPullUpTipHide) {
+    let { pullUpLoad, isPullUpTipHide, pullUploadEnd} = props
+    const {isPullUpLoad} = scrollState
+    // console.log('isPullUpLoad===>', isPullUpLoad)
+    if (pullUpLoad) {
       return (
-        <div className="b-pullup-wrapper">
-          <div className="after-trigger" style={{ lineHeight: '.32rem' }}>
-            <span style={{ color: '#999999', fontSize: '.28rem' }}>{''}</span>
-          </div>
-        </div>
-      )
-    }
-
-    if (pullUpLoad && state.isPullUpLoad) {
-      return (
-        <div className="b-pullup-wrapper">
-          <div className="after-trigger" style={{ lineHeight: '.32rem' }}>
-            <i className="loading-icon"></i>
-            <span style={{ color: '#999999', fontSize: '.28rem' }}>{typeof pullUpLoad === 'object' ? pullUpLoad.txt.more : '加载中...'}</span>
-          </div>
-        </div>
-      )
-    }
-    if (pullUpLoad && !state.isPullUpLoad) {
-      return (
-        <div className="b-pullup-wrapper">
-          <div className="before-trigger">
-            <span style={{ color: '#999999', fontSize: '.28rem' }}>{typeof pullUpLoad === 'object' ? pullUpLoad.txt.nomore : '加载完成'}</span>
-          </div>
+        <div className="pullup_wrapper">
+          {
+            isPullUpTipHide ? '' : (
+              pullUploadEnd ? <div className="pullup_status">{pullUpLoad.txt.nomore || '我也是有底线的'}</div> : (isPullUpLoad ? <Loading>{typeof pullUpLoad === 'object' ? pullUpLoad.txt.more : '加载中...'}</Loading> : <div className="pullup_status">{pullUpLoad.txt.nomore || '加载完成'}</div>)
+            )
+          }
         </div>
       )
     }
   }
+
 
   function renderPullUpDown() {
     let { pullDownRefresh } = props
     let { beforePullDown, pulling, pullDownStyle } = scrollState
-    if (pullDownRefresh && beforePullDown) {
+    if (pullDownRefresh) {
       return (
-        <div className="b-pulldown-wrapper" style={pullDownStyle} >
-          <div className="before-trigger">
-            <Bubble y={scrollState.bubbleY}></Bubble>
-          </div>
-        </div>
-      )
-    }
-
-    if (pullDownRefresh && !beforePullDown && pulling) {
-      return (
-        <div className="b-pulldown-wrapper" style={pullDownStyle}>
-          <div className="after-trigger">
-            <div className="loading">
-              {/* <Loading></Loading> */}
-              loading
-            </div>
-          </div>
-        </div>
-      )
-    }
-
-    if (pullDownRefresh && !beforePullDown && !pulling) {
-      return (
-        <div className="b-pulldown-wrapper" style={pullDownStyle}>
-          <div className="after-trigger">
-            <div><span
-              style={{ fontSize: '.18rem' }}>{typeof options.pullDownRefresh === 'object' ? options.pullDownRefresh.txt.success : '刷新完成'}</span>
-            </div>
+        <div className="pulldown_wrapper" style={pullDownStyle} >
+          <div className="pulldown_status">
+             {
+               beforePullDown && <Bubble y={scrollState.bubbleY}></Bubble>
+             }
+             {
+               !beforePullDown && pulling && <Loading style={1}>加载中...</Loading> 
+             }
+             {
+               !beforePullDown && !pulling && <PullDowned>{typeof options.pullDownRefresh === 'object' ? options.pullDownRefresh.txt.success : '刷新完成'}</PullDowned>
+             }
           </div>
         </div>
       )
     }
   }
+  
+  // 暴露给外面回调的方法 
+  useImperativeHandle(ref, () => ({
+    enable() {
+      scroll.enable()
+    },
+    disable() {
+      scroll.disable()
+    },
+    refresh() {
+      scroll.refresh()
+    },
+    destroy() {
+      scroll.destroy()
+    },
+    scrollTo(x, y) {
+      scroll.scrollTo(x,y)
+    },
+    getScroll() {
+      return scroll // 获取对象实例
+    }
+  }))
 
   return (
     <ScrollContainer ref={scrollRef}>
-        {scrollState.bubbleY}
-        <div className="b-wrapper">
+        <div className="scroll_content">
           {props.children}
           {renderPullUpLoad()} 
-          {renderPullUpDown()}
         </div>
+        {renderPullUpDown()}
     </ScrollContainer>
   )
 
-}
+})
 
 Scroll.defaultProps = {
   probeType: 3,
@@ -315,17 +340,18 @@ Scroll.defaultProps = {
   scrollX: false,
   freeScroll: true,
   scrollbar: false,
-  pullDownRefresh: true,
-  pullUpLoad: false,
+  pullDownRefresh: true, // 是否开启下拉刷新，前提要 bounce 开启 要不然不生效
+  pullUpLoad: false, // 是否开启上拉刷新
   bounce: true,
   preventDefaultException: {
     className: /(^|\s)originEvent(\s|$)/,
     tagName: /^(INPUT|TEXTAREA|BUTTON|SELECT|TABLE)$/,
   },
   eventPassthrough: '',
-  isPullUpTipHide: true,
+  isPullUpTipHide: false,
   disabled: false,
   stopPropagation: true,
+  pullUploadEnd: false // 下拉结束
 }
 
 Scroll.propTypes = {
@@ -351,10 +377,12 @@ Scroll.propTypes = {
   pullUpLoadMoreData: PropTypes.func,
   canRenderPullUpTip: PropTypes.bool,
   doPullDownFresh: PropTypes.func,
-  doScroll: PropTypes.func,
-  doScrollStart: PropTypes.func,
-  doScrollEnd: PropTypes.func,
-
+  doScroll: PropTypes.func,  // 滚动派发
+  doScrollStart: PropTypes.func, // 开始滚动
+  doScrollEnd: PropTypes.func, // 滚动结束
+  doScrollTop: PropTypes.func, // 滚动到顶部
+  doScrollBottom: PropTypes.func, // 滚动到底部
+  pullUploadEnd: PropTypes.bool, // 下拉后没有更多数据时触发
   preventDefaultException: PropTypes.object,
   eventPassthrough: PropTypes.string,
   isPullUpTipHide: PropTypes.bool,
