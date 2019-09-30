@@ -4,6 +4,7 @@ import BScroll from 'better-scroll'
 import styled from 'styled-components'
 import Bubble from './bubble'
 import Loading from '@/components/common/loading'
+import debounce from '@/utils/debounce'
 
 const ScrollContainer = styled.div`
   position: absolute;
@@ -158,16 +159,15 @@ const Scroll = forwardRef((props, ref) => {
       })
     }
     scroll && scroll.on('scroll', (pos) => {
-      // console.log('pos-y==>', pos.y, scroll.maxScrollY)
-      props.doScroll && props.doScroll(pos)
-      if (props.doScrollTop) {
-        console.log('到顶')
-        pos.y >= 0 && props.doScrollTop(pos) // 到顶
-      }
-      if (props.doScrollBottom) {
-        console.log('到底')
-        pos.y <= scroll.maxScrollY && props.doScrollBottom(pos) // 到底
-      }
+      props.doScroll && props.doScroll(pos) // 实时吧，不限了
+      debounce(() => {
+        if (props.doScrollTop) {
+          pos.y >= 0 && props.doScrollTop(pos) // 到顶
+        }
+        if (props.doScrollBottom) {
+          pos.y <= scroll.maxScrollY && props.doScrollBottom(pos) // 到底
+        }
+      }, 200)()
     })
   }
 
@@ -333,6 +333,7 @@ const Scroll = forwardRef((props, ref) => {
 })
 
 Scroll.defaultProps = {
+  eventPassthrough: '', // horizontal   vertical
   probeType: 3,
   click: false, // https://ustbhuangyi.github.io/better-scroll/doc/options.html#tap
   startY: 0,
@@ -340,14 +341,13 @@ Scroll.defaultProps = {
   scrollX: false,
   freeScroll: true,
   scrollbar: false,
-  pullDownRefresh: true, // 是否开启下拉刷新，前提要 bounce 开启 要不然不生效
+  pullDownRefresh: false, // 是否开启下拉刷新，前提要 bounce 开启 要不然不生效
   pullUpLoad: false, // 是否开启上拉刷新
   bounce: true,
   preventDefaultException: {
     className: /(^|\s)originEvent(\s|$)/,
     tagName: /^(INPUT|TEXTAREA|BUTTON|SELECT|TABLE)$/,
   },
-  eventPassthrough: '',
   isPullUpTipHide: false,
   disabled: false,
   stopPropagation: true,
