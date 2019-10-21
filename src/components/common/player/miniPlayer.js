@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react'
 import styled from 'styled-components'
-
+import Circle from './circle'
 const MiniPlayerBox = styled.div`
    position: fixed;
    bottom: 0;
@@ -14,16 +14,19 @@ const MiniPlayerBox = styled.div`
    display: flex;
    justify-content: space-between;
    align-items: center;
-   background-color: rgba(42,42,42,.9);
+   /* background-color: rgba(42,42,42,.9); */
+   background: #fff;
    padding: 0 .2rem;
+   
    .song{
        display: flex;
        justify-content: center;
        align-items: center;
-       height: 1.2rem;
+       height: 1.3rem;
        &_pic{
-           width: 1.0rem;
-           height: 1.0rem;
+           transform: translateY(-.12rem);
+           width: 1.3rem;
+           height: 1.3rem;
            display: flex;
            justify-content: center;
            align-items: center;
@@ -37,14 +40,40 @@ const MiniPlayerBox = styled.div`
        &_name{
            margin-left: .2rem;
            font-size: .42rem;
-           color: #fff;
+           color: #2a2a2a;
        }
    }
    .play{
        display: flex;
        justify-content: center;
        align-items: center;
-       font-size: .42rem;
+       font-size: .40rem;
+       color: #2a2a2a;
+       &_btn{
+            width: .8rem;
+            height: .8rem;
+            background-color: transparent;
+            border: 2px solid black;
+            overflow: hidden;
+            border-radius: 50%;
+            position: relative;
+            .circle{
+                width: 100%;
+                height: 100%;
+            }
+            i {
+                font-size: .38rem;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                display: block;
+            }
+       }
+       &_list{
+           margin-left: .35rem;
+          i{font-size: .8rem;} 
+       }
    }
 `
 
@@ -60,8 +89,16 @@ const MiniPlayer = (props) => {
                 </div>
             </div>
             <div className="play">
-                <div className="play_btn">播放</div>
-                <div className="play_list">列表</div>
+                <div className="play_btn">
+                    <div className="circle">
+                        <Circle progress="20" stroke="black"/>
+                    </div>
+                    <i className="iconfont icon-zanting"></i>
+                    {/* play */}
+                </div>
+                <div className="play_list">
+                    <i className="iconfont icon-music5yinle"></i>
+                </div>
             </div>
         </MiniPlayerBox>
     )
