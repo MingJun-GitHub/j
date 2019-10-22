@@ -2,12 +2,14 @@
 import React from 'react'
 import MiniPlayer from './miniPlayer'
 import PlayerList from './playerList'
+import MainPlayer from './mainPlayer'
 
 const Player = (props) => {
     return(
-        <div>
+        <div style={{display: 'none'}}>
             <MiniPlayer></MiniPlayer>
             <PlayerList></PlayerList>
+            <MainPlayer></MainPlayer>
         </div>
     )
 }

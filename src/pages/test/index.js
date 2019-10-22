@@ -2,16 +2,17 @@ import React, { useEffect, useState, useRef } from 'react'
 import Icon from '@/components/common/icon'
 import Swiper from '@/components/common/swiper'
 import Input from '@/components/common/input'
+import ProcessBar from '@/components/common/processbar'
+import ProcessBar2 from '@/components/common/processbar/index2.js'
 // import Loading from '@/components/common/loading'
-import Scroll from '@/components/common/scroll'
-import Player from '@/components/common/player'
+// import Scroll from '@/components/common/scroll'
+// import Player from '@/components/common/player'
 import { getBannerList } from '@/api'
 const Test = (props) => {
     console.log('props==>', props)
     const [bannerList, setBannerList] = useState([])
     const inputRef = useRef(null)
-    let arr1 = [1,2,4,3,2,4,6,4,2,1,4,2,1,4,22,4,5,5,2,2,4,5,2,1,5,,1,4,2]
-    const [arr, setArr] = useState([1,2,4,3,2,4,6,4,2,1,4,2,1,4,22,4,5,5,2,2,4,5,2,1,5,,1,4,2])
+    const [arr] = useState([1])
     useEffect(() => {
         document.title = 'test';
         !bannerList.length && getBannerListFunc();
@@ -44,7 +45,9 @@ const Test = (props) => {
                     }
                     </ul>
                 </div>
-                <Player></Player>
+                <ProcessBar percentChange={(e) => {console.log('e', e)}}></ProcessBar>
+                <ProcessBar2></ProcessBar2>
+                {/* <Player></Player> */}
             </div>
         // </Scroll>
     )

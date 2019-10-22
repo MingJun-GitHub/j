@@ -42,4 +42,4 @@ Circle.defaultProps = {
     strokeWidth: 3
 }
 
-export default Circle
+export default memo(Circle)
