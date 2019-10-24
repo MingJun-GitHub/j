@@ -3,10 +3,9 @@ import Icon from '@/components/common/icon'
 import Swiper from '@/components/common/swiper'
 import Input from '@/components/common/input'
 import ProcessBar from '@/components/common/processbar'
-import ProcessBar2 from '@/components/common/processbar/index2.js'
 // import Loading from '@/components/common/loading'
 // import Scroll from '@/components/common/scroll'
-// import Player from '@/components/common/player'
+import Player from '@/components/common/player'
 import { getBannerList } from '@/api'
 const Test = (props) => {
     console.log('props==>', props)
@@ -45,9 +44,9 @@ const Test = (props) => {
                     }
                     </ul>
                 </div>
-                <ProcessBar percentChange={(e) => {console.log('e', e)}}></ProcessBar>
-                <ProcessBar2></ProcessBar2>
-                {/* <Player></Player> */}
+                <ProcessBar percent={0.2} percentChange={(e) => {console.log('e', e)}}></ProcessBar>
+                {/* <ProcessBar2></ProcessBar2> */}
+                <Player></Player>
             </div>
         // </Scroll>
     )

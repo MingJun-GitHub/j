@@ -3,18 +3,19 @@ import styled from 'styled-components'
 
 const ProgressBarBox = styled.div`
   height: .8rem;
-  width: 60%;
+  width: 100%;
   margin: 0 auto;
+  /* overflow: hidden; */
   .progress-inner{
     position: relative;
     top: .34rem;
     height: .12rem;
     border-radius: .06rem;
-    background-color: rgba(255, 255, 255, .3);
+    background-color: ${props => props.innerColor};
     .progress{
       position: absolute;
       height: 100%;
-      background: #fff;
+      background: ${props => props.processColor};
       border-radius: .06rem;
     }
     .progress-btn-wrapper{
@@ -33,9 +34,9 @@ const ProgressBarBox = styled.div`
         box-sizing: border-box;
         width: .5rem;
         height: .5rem;
-        border: 3px solid red;
+        border: 3px solid ${props => props.btnBorderColor};
         border-radius: 50%;
-        background-color: #fff;
+        background-color: ${props => props.btnBgColor};
       }
     }
   }
@@ -49,9 +50,13 @@ function ProgressBar(props){
   const [progressBtnWidth, setProgressBtnWidth] = useState(16)
   const [barWidth, setBarWidth] = useState(0)
   const { percent } = props
-
   const transform = 'transform' //prefixStyle('transform');
-  
+
+  useEffect(() => {
+    setProgressBtnWidth(progressBtn.current.getBoundingClientRect().width)
+    setBarWidth(progressBar.current.clientWidth - progressBtnWidth)
+  }, [])
+
   useEffect(() => {
     if(percent >= 0 && percent <= 1 && !touch.initiated) {
       const offsetWidth = percent * barWidth;
@@ -59,12 +64,9 @@ function ProgressBar(props){
       progressBtn.current.style[transform] = `translate3d(${offsetWidth}px, -50%, 0)`;
     }
     // eslint-disable-next-line
-  }, [percent])
+  }, [percent, barWidth])
 
-  useEffect(() => {
-    setProgressBtnWidth(progressBtn.current.getBoundingClientRect().width)
-    setBarWidth(progressBar.current.clientWidth - progressBtnWidth)
-  }, [])
+  
 
   const setOffset = (offsetWidth) => {
     progress.current.style.width = `${offsetWidth}px`;
@@ -72,7 +74,7 @@ function ProgressBar(props){
   }
 
   const changePercent = () => {
-    const curPercent = progress.current.clientWidth / barWidth;
+    const curPercent = progress.current.clientWidth / barWidth
     props.percentChange(curPercent)
   }
 
@@ -106,7 +108,7 @@ function ProgressBar(props){
   }
 
   return (
-    <ProgressBarBox>
+    <ProgressBarBox {...props}>
       <div className="progress-inner" ref={progressBar} onClick={progressClick}>
         <div className="progress" ref={progress}></div>
         <div className="progress-btn-wrapper" ref={progressBtn} onTouchStart={progressTouchStart} onTouchMove={progressTouchMove} onTouchEnd={progressTouchEnd}>
@@ -119,7 +121,11 @@ function ProgressBar(props){
 
 
 ProgressBar.defaultProps = {
-    percent: 0
+    percent: 0,
+    innerColor: 'rgba(255, 255, 255, .3)',
+    processColor: '#fff',
+    btnBorderColor: '#fff',
+    btnBgColor: '#fff'
 }
 
 

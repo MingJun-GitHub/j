@@ -1,6 +1,6 @@
-import React, { memo } from 'react'
+import React, { useRef, memo } from 'react'
 import styled from 'styled-components'
-
+import { CSSTransition } from 'react-transition-group'
 const PlayListBox = styled.div`
    position: fixed;
    width: 100%;
@@ -12,8 +12,9 @@ const PlayListBox = styled.div`
    bottom: 0;
    z-index: 12;
    overflow: hidden;
-   background-color: rgba(0, 0 , 0, .82);
-   transform: translate(100%, 0);
+   background-color: rgba(0, 0 , 0, 0);
+   /* transform: translate(100%, 0); */
+   display: none;
    background-size: 100% auto;
    .playerlist {
        &_main{
@@ -124,33 +125,67 @@ const PlayListBox = styled.div`
 `
 
 const PlayList = (props) => {
+    const PlayListRef = useRef(null)
+    const PlayListBoxRef = useRef(null)
+    const {showPlayList} = props
+    console.log('showPlayList', showPlayList)
+    
     return(
-        <PlayListBox>
-            {/* <div className="playlist_mask">1</div> */}
-            <div className="playerlist_main">
-                <div className="playerlist_top">
-                    <i className="iconfont icon-suiji"> 随机播放</i>
-                    <i className="iconfont icon-shanchu1 delall"></i>
+        <CSSTransition
+         in={showPlayList}
+         classNames='playlist-fade'
+         timeout={800}
+         onEnter={() => {
+            PlayListBoxRef.current.style.display = 'block'
+            PlayListRef.current.style['transform'] = `translate3d(0, 100%, 0)`
+          }}
+          onEntering={() => {
+            PlayListRef.current.style['transition'] = 'all 0.3s'
+            PlayListBoxRef.current.style['transition'] = 'background-color 0.3s'
+            PlayListBoxRef.current.style['backgroundColor'] = 'rgba(0,0,0,.68)'
+            PlayListRef.current.style['transform'] = `translate3d(0, 0, 0)`
+          }}
+
+          onExit={() => {
+            PlayListRef.current.style['transform'] = `translate3d(0, 0, 0)`
+          }}
+          onExiting={() => {
+            PlayListRef.current.style['transition'] = 'all 0.3s'
+            PlayListRef.current.style['transform'] = `translate3d(0px, 100%, 0px)`
+            PlayListBoxRef.current.style['backgroundColor'] = 'rgba(0,0,0,0)'
+          }}
+          onExited={() => {
+            PlayListBoxRef.current.style.display = 'none'
+            PlayListRef.current.style['transform'] = `translate3d(0px, 100%, 0px)`
+          }}
+        //   appear={true}
+         >
+            <PlayListBox ref={PlayListBoxRef}>
+                <div className="playerlist_main" ref={PlayListRef}>
+                    <div className="playerlist_top">
+                        <i className="iconfont icon-suiji"> 随机播放</i>
+                        <i className="iconfont icon-shanchu1 delall"></i>
+                    </div>
+                    <div className="playerlist_content">
+                    <ul>
+                        <li className="disabed">
+                            <div className="song">
+                                回到过去<span> - 宋冬野</span>
+                            </div>
+                            <i className="delete iconfont icon-shanchu"></i>
+                        </li>
+                        <li>
+                            <div className="song">
+                                回到过去<span> - 宋冬野</span>
+                            </div>
+                            <i className="delete iconfont icon-shanchu"></i>
+                        </li>
+                    </ul>
+                    </div>
+                    <div className="playerlist_close" onClick={(e) => { props.handlePlayList() }}>关闭</div>
                 </div>
-                <div className="playerlist_content">
-                <ul>
-                    <li className="disabed">
-                        <div className="song">
-                            回到过去<span> - 宋冬野</span>
-                        </div>
-                        <i className="delete iconfont icon-shanchu"></i>
-                    </li>
-                    <li>
-                        <div className="song">
-                            回到过去<span> - 宋冬野</span>
-                        </div>
-                        <i className="delete iconfont icon-shanchu"></i>
-                    </li>
-                </ul>
-                </div>
-                <div className="playerlist_close">关闭</div>
-            </div>
-        </PlayListBox>
+            </PlayListBox>
+        </CSSTransition>
     )
 }
 

@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef, memo} from 'react'
 import styled, {keyframes} from 'styled-components'
-
+import ProcessBar from '@/components/common/processbar'
 import 'swiper/dist/css/swiper.min.css'
 import Swiper from 'swiper';
+import { CSSTransition } from 'react-transition-group' 
 
 
 const rotate = keyframes`
@@ -14,9 +15,8 @@ const rotate = keyframes`
 }
 `
 
-
 const MainPlayerBox = styled.div`
-    display: block;
+    /* display: none; */
     position: fixed;
     z-index: 10;
     width: 100%;
@@ -28,6 +28,8 @@ const MainPlayerBox = styled.div`
     background: url('http://p1.music.126.net/2YIpNoCzXfYgz4zIw3s0Vg==/73667279073787.jpg?param=300x300') no-repeat center/cover;
     overflow: hidden;
     font-size: .42rem;
+    transition: all .3s;
+    transform: translate3d(0, 100%,0);
     &::after{
         display: block;
         content: '';
@@ -150,6 +152,18 @@ const MainPlayerBox = styled.div`
             i {
                     font-size: .62rem;
             }
+            .processbar{
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                width: 92%;
+                margin: .2rem auto .35rem;
+                font-size: .34rem;
+                color: #999;
+                span{
+                    margin: 0 .2rem;
+                }
+            }
             .playebar{
                 display: flex;
                 justify-content: space-between;
@@ -181,13 +195,27 @@ const MainPlayerBox = styled.div`
             }
         }
     }
+    .swiper-pagination-bullet{
+       width: .4rem;
+       height:.1rem;
+       border-radius: 0;
+       line-height: normal;
+       background: rgba(255, 255, 255, .6);
+       /* border-radius: .05rem 0 .05rem 0; */
+       &-active {
+           background: #fff;
+       }
+   }
 `
 
 
 const MainPlayer  = (props) => {
-    const [sliderSwiper, setSliderSwiper] = useState(null);
-    const [playing, setPlaying] = useState(false);
-    const swiperRef = useRef(null);
+    const [sliderSwiper, setSliderSwiper] = useState(null)
+    const [playing, setPlaying] = useState(false)
+    const swiperRef = useRef(null)
+    const mainPlayerRef = useRef(null)
+    const {showMainPlayer} = props
+
     const options = {
         loop: false,
         autoplay: false,
@@ -205,61 +233,83 @@ const MainPlayer  = (props) => {
         }
     }, [sliderSwiper])
 
-
     return (
-        <MainPlayerBox>
-            <div className="main">
-                <div className="navbar">
-                    <i className="close iconfont icon-xiangxia"></i>
-                    <span>回到过去</span>
-                    <i className="comment iconfont icon-pinglun"></i>
-                </div>
+        <CSSTransition
+            in={showMainPlayer}
+            timeout={300}
+            onEnter={() => {
+                // mainPlayerRef.current.style.display = 'block'
+            }}
+            onEntering={() => {
+                mainPlayerRef.current.style.transform = `translate3d(0, 0, 0)`
+            }}
+            onExiting={() => {
+                mainPlayerRef.current.style.transform = `translate3d(0, 100%, 0)`
+            }}
+            onExited={() => {
+                // mainPlayerRef.current.style.display = 'none'
+            }}
+            appear={true}
+        >
+            <MainPlayerBox ref={mainPlayerRef}>
+                <div className="main">
+                    <div className="navbar">
+                        <i className="close iconfont icon-xiangxia" onClick={ e=> props.handleMainPlayer(e)}></i>
+                        <span>回到过去</span>
+                        <i className="comment iconfont icon-pinglun"></i>
+                    </div>
 
-                <div className="content">
-                   <div className="swiper-container" ref={swiperRef}>
-                       <div className="swiper-wrapper">
-                            <div className="swiper-slide">
-                                <div className="song">
-                                    <div className="singer">--周杰伦--</div>
-                                    <div className="tag"><em>VIP</em> <em>MV</em> <em>倍速x1</em> </div>
-                                    {playing}
-                                    <div className={`cover cover_play ${playing ? '': 'cover_pause'}`} onClick={() => setPlaying(!playing)}><img src="http://p1.music.126.net/2YIpNoCzXfYgz4zIw3s0Vg==/73667279073787.jpg?param=300x300" alt="cover" /></div>
-                                    <div className="onelyric">查看完整歌词</div>
+                    <div className="content">
+                    <div className="swiper-container" ref={swiperRef}>
+                        <div className="swiper-wrapper">
+                                <div className="swiper-slide">
+                                    <div className="song">
+                                        <div className="singer">--周杰伦--</div>
+                                        <div className="tag"><em>VIP</em> <em>MV</em> <em>倍速x1</em> </div>
+                                        {playing}
+                                        <div className={`cover cover_play ${playing ? '': 'cover_pause'}`} onClick={() => setPlaying(!playing)}><img src="http://p1.music.126.net/2YIpNoCzXfYgz4zIw3s0Vg==/73667279073787.jpg?param=300x300" alt="cover" /></div>
+                                        <div className="onelyric">查看完整歌词</div>
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="swiper-slide">
-                                <div className="info"></div>
-                            </div>
-                            <div className="swiper-slide">
-                                <div className="lyric"></div>
-                            </div>
-                       </div>
-                       <div className="swiper-pagination"></div>
-                    </div>   
-                </div>
+                                <div className="swiper-slide">
+                                    <div className="info"></div>
+                                </div>
+                                <div className="swiper-slide">
+                                    <div className="lyric"></div>
+                                </div>
+                        </div>
+                        <div className="swiper-pagination"></div>
+                        </div>   
+                    </div>
 
-                <div className="menu">
-                    <div className="playebar">
-                        <i className="iconfont icon-suiji"></i>
-                        <div className="playbtn playbtn2">
-                            <i className="iconfont icon-shangyishou"></i>
+                    <div className="menu">
+                        <div className="processbar">
+                            <span className="curtime">0.00</span>
+                            <ProcessBar  percentChange={(e) => {console.log('e', e)}}></ProcessBar>
+                            <span className="endtime">04.23</span>
                         </div>
-                        <div className="playbtn">
-                           <i className="iconfont icon-player"></i>
+                        <div className="playebar">
+                            <i className="iconfont icon-suiji"></i>
+                            <div className="playbtn playbtn2">
+                                <i className="iconfont icon-shangyishou"></i>
+                            </div>
+                            <div className="playbtn">
+                            <i className="iconfont icon-player"></i>
+                            </div>
+                            <div className="playbtn playbtn2">
+                            <i className="iconfont icon-xiayishou"></i>
+                            </div>
+                            <i className="iconfont icon-music5yinle" onClick={() => props.handlePlayList()}></i> 
                         </div>
-                        <div className="playbtn playbtn2">
-                        <i className="iconfont icon-xiayishou"></i>
+                        <div className="bottombar">
+                            <i className="iconfont icon-shoucang"></i>
+                            <i className="iconfont icon-fenxiang"></i>
+                            <i className="iconfont icon-xiazai"></i>
                         </div>
-                        <i className="iconfont icon-music5yinle"></i> 
-                    </div>
-                    <div className="bottombar">
-                        <i className="iconfont icon-shoucang"></i>
-                        <i className="iconfont icon-fenxiang"></i>
-                        <i className="iconfont icon-xiazai"></i>
                     </div>
                 </div>
-            </div>
-        </MainPlayerBox>
+            </MainPlayerBox>
+        </CSSTransition>
     )
 }
 

@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react'
+import React, { useRef} from 'react'
 import styled from 'styled-components'
 import Circle from './circle'
+import { CSSTransition } from 'react-transition-group' 
 const MiniPlayerBox = styled.div`
    position: fixed;
    bottom: 0;
@@ -17,7 +18,9 @@ const MiniPlayerBox = styled.div`
    /* background-color: rgba(42,42,42,.9); */
    background: #fff;
    padding: 0 .2rem;
-   
+   transition: all .5s;
+   transform: translate3d(0, 0, 0);
+   /* display: none; */
    .song{
        display: flex;
        justify-content: center;
@@ -78,30 +81,46 @@ const MiniPlayerBox = styled.div`
 `
 
 const MiniPlayer = (props) => {
+    const miniPlayerRef = useRef(null)
+    const {showPlayList} = props 
     return(
-        <MiniPlayerBox>
-            <div className="song">
-                <div className="song_pic">
-                    <img src="http://p2.music.126.net/pYP1qp9KqOb1jlVSG8FUqA==/18188121346723724.jpg" alt="songimg"/>
-                </div>
-                <div className="song_name">
-                    周杰伦-回到过去
-                </div>
-            </div>
-            <div className="play">
-                <div className="play_btn">
-                    <div className="circle">
-                        <Circle progress="20" stroke="black"/>
+        <CSSTransition
+            in={showPlayList}
+            classNames='miniplayer-fade'
+            timeout={300}
+            onEntering={() => {
+                miniPlayerRef.current.style.transform = `translate3d(0, 100%, 0)`
+            }}
+            onExiting={() => {
+                miniPlayerRef.current.style.transform = `translate3d(0, 0, 0)`
+            }}
+            appear={true}
+        >
+            <MiniPlayerBox ref={miniPlayerRef}>
+                <div className="song" onClick={e => props.handleMainPlayer(e)}>
+                    <div className="song_pic">
+                        <img src="http://p2.music.126.net/pYP1qp9KqOb1jlVSG8FUqA==/18188121346723724.jpg" alt="songimg"/>
                     </div>
-                    <i className="iconfont icon-zanting"></i>
-                    {/* play */}
+                    <div className="song_name">
+                        周杰伦-回到过去
+                    </div>
                 </div>
-                <div className="play_list">
-                    <i className="iconfont icon-music5yinle"></i>
+                <div className="play">
+                    <div className="play_btn">
+                        <div className="circle">
+                            <Circle progress="20" stroke="black"/>
+                        </div>
+                        <i className="iconfont icon-zanting"></i>
+                        {/* play */}
+                    </div>
+                    <div className="play_list" onClick={() => { props.handlePlayList() }}>
+                        <i className="iconfont icon-music5yinle"></i>
+                    </div>
                 </div>
-            </div>
-        </MiniPlayerBox>
+            </MiniPlayerBox>
+        </CSSTransition>
     )
+
 } 
 
 export default MiniPlayer
