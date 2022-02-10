@@ -139,7 +139,7 @@
     "create-keyframe-animation": "^0.1.0",
     "fastclick": "^1.0.6",
     "immutable": "^4.0.0-rc.12",
-    "node-sass": "^4.12.0",
+    "node-sass": "^7.0.0",
     "prop-types": "^15.7.2",
     "react-lazyload": "^2.6.2",
     "react-redux": "^7.1.1",
